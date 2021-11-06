@@ -1,9 +1,10 @@
 <template>
-  <v-app>
+  <v-app style="background-color: rgba(119, 178, 184, 0.253);">
     <v-app-bar
       app
-      color="gray"
+      color="green"
       dark
+      dense
     >
       <div class="d-flex align-center">
         GoDrop

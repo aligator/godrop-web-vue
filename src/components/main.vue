@@ -11,7 +11,7 @@
       fab
       small
       dark
-      color="indigo"
+      color="rgba(10,68,68,0.8)"
     >
       <v-icon dark>
         mdi-arrow-left-circle
@@ -24,12 +24,24 @@
           sm="6"
           style="display:flex;justify-content:flex-end">
           <div class="pa-2 input">
+            <v-btn
+      class="mx-2"
+      fab
+      small
+      dark
+      color="rgba(88,58,48,0.5)"
+    >
+      <v-icon dark>
+        mdi-plus
+      </v-icon>
+    </v-btn>
     <v-text-field
     dense
     dark
     hide-details="true"
     color="grey"
-    background-color="rgb(59, 67, 73)"
+    
+    background-color="rgba(59, 67, 73, .3)"
             v-model="message"
             :append-outer-icon="icon ? 'mdi-folder-plus' : 'mdi-folder-open' "
             type="text"
@@ -42,6 +54,7 @@
   </div>
 
     <v-data-table
+    style="background-color:rgba(8,50,28,0.3)"
     :loading="loading"
     :headers="headers"
     :items="desserts"
@@ -51,6 +64,7 @@
   >
     <template v-slot:top>
       <v-toolbar
+      style="background-color:rgba(8,50,28,0.2)"
         flat
       >
         <v-toolbar-title>My CRUD</v-toolbar-title>
@@ -99,8 +113,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
+                      v-model="editedItem.id"
+                      label="ID"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -109,8 +123,8 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
+                      v-model="editedItem.mimeType"
+                      label="Type"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -156,6 +170,8 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
+      
+      
       <v-icon
         small
         class="mr-2"
@@ -164,10 +180,19 @@
         mdi-pencil
       </v-icon>
       <v-icon
+      class="mr-3"
         small
         @click="deleteItem(item)"
       >
         mdi-delete
+      </v-icon>
+    <v-icon
+      v-if="item.mimeType!=null"
+        small
+        class="mr-2"
+        @click="editItem(item)"
+      >
+        mdi-download
       </v-icon>
     </template>
     <template v-slot:no-data>
@@ -235,7 +260,7 @@ data(){
             value: 'name',
           },
           { text: 'Pfad', value: 'id' },
-          { text: 'Type', value: 'type' },
+          { text: 'Type', value: 'mimeType' },
         { text: 'Actions', value: 'actions', sortable: false },
         ],
 
@@ -262,7 +287,7 @@ data(){
       },
       getFileNode() {
         this.path=this.getFileNode.id;
-        console.log(this.path);
+        console.log(this.getFileNode);
         this.desserts=this.getFileNode.children||[];
         this.loading=false;
       }
@@ -289,10 +314,10 @@ methods:{
 
     if(arr.length<=1)this.path="\\";
     this.refetch(this.path);
-    console.log(this.path);
+    
   },
   handleClick(row){
-    this.refetch(row.id);
+    if(row.isFolder) this.refetch(row.id);
   },
   initialize () {
 
@@ -364,7 +389,9 @@ refetch(path){
 .controls{
   display: flex;
   width:100%;
-  background-color: rgb(49, 57, 63);
+  background-color: rgb(2, 131, 109);
   /* padding: 10px; */
 }
+
+ tr:hover { background-color: rgba(0,0,22,0.3) !important; }
 </style>
