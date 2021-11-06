@@ -6,31 +6,15 @@
           sm="6">
     <div class=" buttons">
       <v-btn
+      @click="back"
       class="mx-2"
       fab
+      small
       dark
       color="indigo"
     >
       <v-icon dark>
-        mdi-plus
-      </v-icon>
-    </v-btn><v-btn
-      class="mx-2"
-      fab
-      dark
-      color="indigo"
-    >
-      <v-icon dark>
-        mdi-plus
-      </v-icon>
-    </v-btn><v-btn
-      class="mx-2"
-      fab
-      dark
-      color="indigo"
-    >
-      <v-icon dark>
-        mdi-plus
+        mdi-arrow-left-circle
       </v-icon>
     </v-btn>
   </div> 
@@ -38,10 +22,12 @@
 </v-col>
   <v-col cols="12"
           sm="6"
-          style="display:flex;align-items:center">
-          <div class="pt-5 buttons">
+          style="display:flex;justify-content:flex-end">
+          <div class="pa-2 input">
     <v-text-field
-    
+    dense
+    dark
+    hide-details="true"
     color="grey"
     background-color="rgb(59, 67, 73)"
             v-model="message"
@@ -61,6 +47,7 @@
     :items="desserts"
     :items-per-page="5"
     class="elevation-1"
+    @click:row="handleClick"
   >
     <template v-slot:top>
       <v-toolbar
@@ -224,17 +211,15 @@ fragment FileNodeWithChildren on FileNode {
       }
     }`,
       variables: {
-      path: '/',
+      path: '\\',
     },
     },
 
 
   },
-      variables:{
-      path:"/"
-    },
 data(){
   return {
+    path:"",
     loading:true,
     getFileNode:[],
          dialog: false,
@@ -249,8 +234,8 @@ data(){
             sortable: false,
             value: 'name',
           },
-          { text: 'Filename', value: 'id' },
-          { text: 'Type', value: 'isFolder' },
+          { text: 'Pfad', value: 'id' },
+          { text: 'Type', value: 'type' },
         { text: 'Actions', value: 'actions', sortable: false },
         ],
 
@@ -276,7 +261,9 @@ data(){
         val || this.closeDelete()
       },
       getFileNode() {
-        this.desserts=this.getFileNode.children;
+        this.path=this.getFileNode.id;
+        console.log(this.path);
+        this.desserts=this.getFileNode.children||[];
         this.loading=false;
       }
     },
@@ -292,9 +279,24 @@ data(){
 
 
 methods:{
+  back(){
+       
+    const arr = this.path.split("\\");
+    
+    arr.pop();
+    
+    this.path = arr.join("\\");
+
+    if(arr.length<=1)this.path="\\";
+    this.refetch(this.path);
+    console.log(this.path);
+  },
+  handleClick(row){
+    this.refetch(row.id);
+  },
   initialize () {
 
-        //this.desserts = this.getFileNode.children;
+        this.refetch("\\");
       },
        editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -333,20 +335,31 @@ methods:{
         this.close()
       },
 log(){
-  console.log(this.getFileNode.children);
+  this.$apollo.queries.getFileNode.refetch({
+  path: '/test'
+})
+  
   this.icon=false;
   setTimeout(()=>{this.icon=true},50);
   
+},
+refetch(path){
+    this.$apollo.queries.getFileNode.refetch({
+  path: path
+})
 }
 }
 }
 </script>
 
 <style>
+.input{
+   display: flex;
+  justify-content: flex-end;
+}
 .buttons{
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
 }
 .controls{
   display: flex;
